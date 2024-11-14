@@ -15,7 +15,7 @@ function App() {
     // getScores();
     (async () => {
       const data = await getLeaderboardData();
-      console.log(data);
+      data.sort((a, b) => b.score - a.score);
       setLeaderboardData(data);
     })();
   }, []);
@@ -44,7 +44,6 @@ function App() {
     if (!txtFile || !pyFile) {
       alert("Please select both a .txt file and a .py file.");
     }
-    console.log(txtFile, pyFile);
   };
 
   const handleFileUpload = async () => {
@@ -62,6 +61,7 @@ function App() {
       } else {
         alert("Files uploaded successfully");
         const newLeaderboardData = await getLeaderboardData();
+        newLeaderboardData.sort((a, b) => b.score - a.score);
         setLeaderboardData(newLeaderboardData);
         setTxtFile(null);
         setPyFile(null);
@@ -131,7 +131,7 @@ function App() {
               return (
                 <li key={id}>
                   <p>
-                    {entry.name}: {entry.score}. Submitted at{" "}
+                    {id + 1}. {entry.name}: {entry.score}. Submitted at{" "}
                     {new Date(entry.time).toLocaleDateString("en-US")}
                   </p>
                 </li>
