@@ -7,6 +7,7 @@ function App() {
   const [txtFile, setTxtFile] = useState(null);
   const [pyFile, setPyFile] = useState(null);
   const [name, setName] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -47,17 +48,29 @@ function App() {
   };
 
   const handleFileUpload = async () => {
+    if (loading) {
+      alert("Already uploading");
+      return;
+    }
     if (txtFile && pyFile && name !== null) {
+      //   const result = await submitFilesToLeaderboard(name, txtFile, pyFile);
+      setLoading(true);
       const result = await submitFilesToLeaderboard(name, txtFile, pyFile);
       if (result.error) {
         alert(result.error);
+        setLoading(false);
       } else {
         alert("Files uploaded successfully");
         const newLeaderboardData = await getLeaderboardData();
         setLeaderboardData(newLeaderboardData);
+        setTxtFile(null);
+        setPyFile(null);
+        setLoading(false);
       }
     } else {
-      alert("Please select a .txt file and a .py file before uploading");
+      alert(
+        "Please select a .txt file and a .py file and put in your name before uploading"
+      );
     }
   };
 
@@ -90,10 +103,14 @@ function App() {
           </div>
           <div className="flex-1 flex">
             <div
-              className="bg-green-500 text-white rounded-lg px-4 py-2 cursor-pointer hover:bg-green-600 transition w-32 h-8 item-center justify-center"
+              className={`${
+                !loading ? "bg-green-500" : "bg-slate-500"
+              } text-white rounded-lg px-4 py-2 cursor-pointer hover:${
+                !loading ? "bg-green-500" : "bg-slate-500"
+              } transition w-32 h-8 item-center justify-center`}
               onClick={handleFileUpload}
             >
-              Upload
+              {loading ? "Uploading..." : "Submit"}
             </div>
             <input
               type="text"
@@ -104,6 +121,7 @@ function App() {
               }}
               className="w-48 h-8"
             />
+            {txtFile && pyFile && <div>File uploaded</div>}
           </div>
         </div>
         <div className="flex-1 flex flex-col justify-top p-5 font-bold">
