@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FaFileUpload } from "react-icons/fa";
+import { FaFileUpload, FaSpinner } from "react-icons/fa";
 import { getLeaderboardData, submitFilesToLeaderboard } from "./api";
 
 function App() {
@@ -8,6 +8,8 @@ function App() {
   const [pyFile, setPyFile] = useState(null);
   const [name, setName] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("");
+  const [loadingCycle, setLoadingCycle] = useState(0);
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -19,6 +21,28 @@ function App() {
       setLeaderboardData(data);
     })();
   }, []);
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setLoadingCycle((prev) => (prev + 1) % 3)
+      }, 500);
+
+      const timeout = setTimeout(() => {
+        setLoading(false);
+      }, 150000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    setLoadingText("Loading" + ".".repeat(loadingCycle + 1));
+  }, [loadingCycle]);
+
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
@@ -78,7 +102,7 @@ function App() {
     <>
       <input
         type="file"
-        accept=".txt,.py"
+        accept=".txt, .py"
         multiple
         ref={fileInputRef}
         style={{ display: "none" }}
@@ -91,7 +115,7 @@ function App() {
             placeholder="Enter your name"
             value={name || ""}
             onChange={(e) => setName(e.target.value)}
-            className=" border-gray-400 border-dashed mb-4 p-2 rounded-md"
+            className="border-dashed mb-4 p-2 rounded-md border-gray-600"
           />
           <div
             className="flex-1 flex flex-col items-center justify-center border-2 border-gray-400 border-dashed rounded-md mb-2"
@@ -110,19 +134,15 @@ function App() {
               } transition w-32 h-8 item-center justify-center`}
               onClick={handleFileUpload}
             >
-              {loading ? "Uploading..." : "Submit"}
+              {loading ? (                
+                <div className="flex items-center">
+                  <FaSpinner className="animate-spin mr-2" />
+                  {loadingText}
+                </div>) : "Submit"}
             </div>
-            <input
-              type="text"
-              name="name"
-              id=""
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-              className="w-48 h-8"
-            />
             {txtFile && pyFile && <div>File uploaded</div>}
           </div>
+          <div className="font-bold">Please note that it will take around 2.5 minutes to grade your submission!</div>
         </div>
         <div className="flex-1 flex flex-col justify-top p-5 font-bold">
           Leaderboard (Top 15 Submissions)
