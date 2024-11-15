@@ -10,6 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("");
   const [loadingCycle, setLoadingCycle] = useState(0);
+  const [errorDetail, setErrorDetail] = useState(null)
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -81,6 +82,7 @@ function App() {
       const result = await submitFilesToLeaderboard(name, txtFile, pyFile);
       if (result.error) {
         alert(result.error);
+        setErrorDetail(result.detail)
         setLoading(false);
       } else {
         alert("Files uploaded successfully");
@@ -142,6 +144,12 @@ function App() {
             </div>
             {txtFile && pyFile && <div>File uploaded</div>}
           </div>
+          {
+            errorDetail ? 
+            <div className="align-top"><p className="font-bold">An error has occured in your code: </p>{errorDetail}</div> 
+            : 
+            <div></div>
+          }
           <div className="font-bold">Please note that it will take around 2.5 minutes to grade your submission!</div>
         </div>
         <div className="flex-1 flex flex-col justify-top p-5 font-bold">
