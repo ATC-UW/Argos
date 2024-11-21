@@ -10,7 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("");
   const [loadingCycle, setLoadingCycle] = useState(0);
-  const [errorDetail, setErrorDetail] = useState(null)
+  const [errorDetail, setErrorDetail] = useState("");
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
@@ -112,13 +112,16 @@ function App() {
       />
       <div className="flex h-screen">
         <div className="flex flex-col flex-1 p-5 border-r border-gray-300">
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={name || ""}
-            onChange={(e) => setName(e.target.value)}
-            className="border-dashed mb-4 p-2 rounded-md border-gray-600"
-          />
+          <div className="flex flex-row max-h-12 max-w-12">
+            <img src="https://students.washington.edu/atcuw/img/logo.jpg" alt="" srcset="" />
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name || ""}
+              onChange={(e) => setName(e.target.value)}
+              className="border-dashed p-2 rounded-md border-gray-600"
+            />
+          </div>
           <div
             className="flex-1 flex flex-col items-center justify-center border-2 border-gray-400 border-dashed rounded-md mb-2"
             onClick={handleButtonClick}
@@ -127,7 +130,7 @@ function App() {
             <p className="font-bold"> Click to Upload Files </p>
             <p> (requirements.txt & maker.py) </p>
           </div>
-          <div className="flex-1 flex">
+          <div className="flex-1 flex flex-col">
             <div
               className={`${
                 !loading ? "bg-green-500" : "bg-slate-500"
@@ -143,13 +146,14 @@ function App() {
                 </div>) : "Submit"}
             </div>
             {txtFile && pyFile && <div>File uploaded</div>}
+            {errorDetail && (
+            <div className="bg-red-200 p-2 mt-2 rounded">
+              <p className="font-bold">An error has occurred in your code:</p>
+              {errorDetail}
+            </div>
+          )}
           </div>
-          {
-            errorDetail ? 
-            <div className="align-top"><p className="font-bold">An error has occured in your code: </p>{errorDetail}</div> 
-            : 
-            <div></div>
-          }
+
           <div className="font-bold">Please note that it will take around 2.5 minutes to grade your submission!</div>
         </div>
         <div className="flex-1 flex flex-col justify-top p-5 font-bold">
